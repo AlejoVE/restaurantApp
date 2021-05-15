@@ -41,6 +41,17 @@
                         <!-- That is why now i this line, we can access to the name of the category -->
                         <!-- That is inside that menu -->
                         <td>{{$menu->category->name}}</td>
+                        <td >
+                            <a href="/management/menu/{{$menu->id}}/edit" class="btn btn-warning">Edit</a>
+                        </td>
+                        <td >
+                        <!-- The link in the action is coming from php artisan route:list, check delete method -->
+                            <form action="/management/menu/{{$menu->id}}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <input type="submit" class="btn btn-danger" value="Delete"/>
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
