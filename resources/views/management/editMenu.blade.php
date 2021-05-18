@@ -17,9 +17,10 @@
                 </div>
             @endif
             <!-- When we want to upload images, we have to add the attribute enctype to the form -->
-            <form action="/management/menu" method="POST" enctype="multipart/form-data">
+            <form action="/management/menu/{{$menu->id}}" method="POST" enctype="multipart/form-data">
             <!-- For security reasons, laravel wants you to put @csrf here -->
             @csrf
+            @method('PUT')
                 <div class="form-group">
                     <label for="name">Menu Name</label>
                     <input type="text" value="{{$menu->name}}" class="form-control" name="name" id="name" placeholder="Menu..."/>
@@ -40,7 +41,7 @@
                         <span class="input-group-text">Upload</span>
                     </div>
                     <div class="custom-file">
-                        <input type="file"  value="{{$menu->image}}" class="custom-file-input" id="inputGroupFile01" name="image"/>
+                        <input type="file" class="custom-file-input" id="inputGroupFile01" name="image"/>
                         <label for="inputGroupFile01" class="custom-file-label">Choose File</label>
                     </div>
                 </div>
@@ -58,7 +59,7 @@
                         @endforeach
                     </select>
                 </div>
-                    <button hrtime type="submit" class="btn btn-primary mt-3">Update</button>
+                    <button type="submit" class="btn btn-primary mt-3">Update</button>
                 </div>
             </form>
         </div>

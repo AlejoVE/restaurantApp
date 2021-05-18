@@ -31,7 +31,7 @@
                 <div class="form-group">
                     <label for="categoryName">Category Name</label>
                     <input type="text" class="form-control" name="name" value="{{$category->name}}" placeholder="Category..."/>
-                    <button hrtime type="submit" class="btn btn-primary mt-3">Update</button>
+                    <button type="submit" class="btn btn-primary mt-3">Update</button>
                 </div>
             </form>
         </div>
