@@ -23,6 +23,10 @@ Route::get('/management', function(){
     return view("management.index");
 });
 
+Route::get('/cashier', 'Cashier\CashierController@index');
+
+Route::get('/cashier/getTables', 'Cashier\CashierController@getTables')->name('home');
+
 Route::resource('management/category', 'Management\CategoryController');
 Route::resource('management/menu', 'Management\MenuController');
 Route::resource('management/table', 'Management\TableController');
