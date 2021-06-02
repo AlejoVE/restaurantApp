@@ -56,7 +56,7 @@
                 @endforeach
                 </tbody>
             </table>
-
+            {{$menus->links()}}
         </div>
     </div>
 
