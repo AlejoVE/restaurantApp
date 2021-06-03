@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Table;
 use App\Category;
 use App\Menu;
+use App\Sale;
+use App\SaleDetail;
+use Illuminate\Support\Facades\Auth;
 
 class CashierController extends Controller
 {
@@ -23,7 +26,7 @@ class CashierController extends Controller
         foreach ($tables as $table) {
             $html .= '<div class="col-md-2 mb-4">';
             $html .=
-                '<button class="btn btn-primary btn-table" data-id="'.$table->id.'" data-name="'.$table->name.'">
+                '<button class="btn btn-primary btn-table" data-id="' . $table->id . '" data-name="' . $table->name . '">
                 <img class="img-fluid" src="' . url('/images/table.svg') . '"/>
                 <br />
                 <span class="badge badge-success">' . $table->name . '</span>
@@ -34,24 +37,72 @@ class CashierController extends Controller
         return $html;
     }
 
-    public function getMenusByCategory($category_id){
+    public function getMenusByCategory($category_id)
+    {
         $menus = Menu::where('category_id', $category_id)->get();
         $html = '';
 
-        foreach($menus as $menu){
+        foreach ($menus as $menu) {
             $html .= '
             <div class="col-md-3 text-center">
-                <a class="btn btn-outline-secondary" data-id="'.$menu->id.'">
-                    <img class="img-fluid" width="120px" height="120px" src="'.url('/menu_images/'.$menu->image).'">
+                <a class="btn btn-outline-secondary btn-menu" data-id="' . $menu->id . '">
+                    <img class="img-fluid" width="120px" height="120px" src="' . url('/menu_images/' . $menu->image) . '">
                     <br />
-                    '.$menu->name.'
+                    ' . $menu->name . '
                     <br />
-                    $'.number_format($menu->price).'
+                    $' . number_format($menu->price) . '
                 </a>
             </div>
             ';
         }
 
         return $html;
+    }
+
+    public function orderFood(Request $request)
+    {
+
+        $menu = Menu::find($request->menu_id);
+        $table_id = $request->table_id;
+        $table_name = $request->table_name;
+        $sale = Sale::where('table_id', $table_id)->where('sale_status', 'unpaid')->first();
+
+        //If there is no sale, create a new one
+        if (!$sale) {
+            //To get the user that is logged in
+            $user = Auth::user();
+            $sale = new Sale();
+            $sale->table_id = $table_id;
+            $sale->table_name = $table_name;
+            $sale->user_id = $user->id;
+            $sale->user_name = $user->name;
+            $sale->save();
+
+            //After is created in the database
+            $sale_id = $sale->id;
+
+            //update table status
+            $table = Table::find($table_id);
+            $table->status = 'Unavailable';
+            $table->save();
+
+        } else {
+            $sale_id = $sale->id;
+        }
+
+        // add ordered menu to the sale_details table
+        $saleDetail = new SaleDetail();
+        $saleDetail->sale_id = $sale_id;
+        $saleDetail->menu_id = $menu->id;
+        $saleDetail->menu_name = $menu->name;
+        $saleDetail->menu_price = $menu->price;
+        $saleDetail->quantity = $request->quantity;
+        $saleDetail->save();
+
+        //update total price in sale table
+        $sale->total_price = $sale->total_price + ($menu->price * $request->quantity);
+        $sale->save();
+
+        return $sale->total_price;
     }
 }

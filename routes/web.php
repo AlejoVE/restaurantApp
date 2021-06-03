@@ -11,6 +11,9 @@
 |
 */
 
+// use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -26,7 +29,7 @@ Route::get('/management', function(){
 Route::get('/cashier', 'Cashier\CashierController@index');
 Route::get('/cashier/getMenusByCategory/{category_id}', 'Cashier\CashierController@getMenusByCategory');
 Route::get('/cashier/getTables', 'Cashier\CashierController@getTables')->name('home');
-
+Route::post('/cashier/orderFood', 'Cashier\CashierController@orderFood');
 
 Route::resource('management/category', 'Management\CategoryController');
 Route::resource('management/menu', 'Management\MenuController');
