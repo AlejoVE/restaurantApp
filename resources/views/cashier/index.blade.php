@@ -53,12 +53,16 @@
 
     let selected_table_id = '';
     let selected_table_name = '';
+
     // detect click event on button to display table data
     $('#table-detail').on('click', '.btn-table', function(){
          selected_table_id = $(this).data('id');
          selected_table_name = $(this).data('name');
-
         $('#selected-table').html('<br /><h3>Table:'+selected_table_name+'</h3><hr>');
+
+        $.get("cashier/getSaleDetailsByTable/"+selected_table_id, function(data){
+            $('#order-detail').html(data);
+        });
     })
 
 
